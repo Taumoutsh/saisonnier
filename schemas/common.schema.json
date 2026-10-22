@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://saisonnier.local/schemas/common.schema.json",
+  "title": "Définitions communes",
+  "$defs": {
+    "requestId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "deviceId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,64}$"
+    },
+    "timestamp": {
+      "description": "Epoch en millisecondes",
+      "type": "integer",
+      "minimum": 0
+    },
+    "requestName": {
+      "enum": ["turnOnDevice", "turnOffDevice", "getDeviceStatus", "setDeviceLevel", "rebootDevice"]
+    },
+    "eventName": {
+      "enum": ["deviceTurnedOn", "deviceTurnedOff", "deviceRebooted", "deviceStateChanged", "deviceAlarm"]
+    },
+    "status": {
+      "enum": ["DONE", "FAILED"]
+    },
+    "errorCode": {
+      "enum": ["INVALID_REQUEST", "DUPLICATE", "QUEUE_FULL", "TIMEOUT", "STEP_FAILED", "INTERFACE_UNAVAILABLE", "INTERNAL"]
+    }
+  }
+}

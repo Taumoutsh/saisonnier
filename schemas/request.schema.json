@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://saisonnier.local/schemas/request.schema.json",
+  "title": "Requête entrante (client TCP -> application)",
+  "type": "object",
+  "required": ["request"],
+  "additionalProperties": false,
+  "properties": {
+    "request": { "$ref": "common.schema.json#/$defs/requestName" },
+    "id": { "$ref": "common.schema.json#/$defs/requestId" },
+    "parameters": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "request": { "enum": ["turnOnDevice", "turnOffDevice", "getDeviceStatus", "rebootDevice"] } } },
+      "then": { "properties": { "parameters": { "$ref": "#/$defs/deviceParameters" } } }
+    },
+    {
+      "if": { "properties": { "request": { "const": "setDeviceLevel" } } },
+      "then": {
+        "required": ["parameters"],
+        "properties": { "parameters": { "$ref": "#/$defs/levelParameters" } }
+      }
+    }
+  ],
+  "$defs": {
+    "deviceParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "deviceId": { "$ref": "common.schema.json#/$defs/deviceId" }
+      }
+    },
+    "levelParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level"],
+      "properties": {
+        "deviceId": { "$ref": "common.schema.json#/$defs/deviceId" },
+        "level": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    }
+  }
+}

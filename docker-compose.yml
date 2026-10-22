@@ -1,0 +1,39 @@
+# Environnement de démonstration complet :
+#   client_1 (tools/send_request.py, depuis l'hôte) -> gateway :7000
+#   gateway -> device-sim (WebSocket :9001)
+#   gateway -> server_1 / server_2 (TCP :7001 / :7002)
+#
+#   docker compose up --build
+#   python3 tools/send_request.py turnOnDevice deviceId=lamp-1
+#   docker attach saisonnier-device-sim-1   # puis taper : fail powerOn, alarm lamp-1 overheat, ...
+services:
+  gateway:
+    build: .
+    ports:
+      - "7000:7000"
+    environment:
+      WS_ENDPOINTS: device=ws://device-sim:9001
+      TCP_SERVERS: server_1=server_1:7001,server_2=server_2:7002
+      RESPONSE_TARGETS: origin,server_1
+      EVENT_TARGETS: clients,server_1
+      DEFAULT_TIMEOUT_MS: "5000"
+      STEP_TIMEOUT_MS: "2000"
+      # ENABLED_STEPS: turnOnDevice.notify,rebootDevice.maintenance_ack
+      # DISABLED_STEPS: turnOnDevice.verify_state
+      # PAUSE_TURN_ON_DEVICE_SETTLE_MS: "500"
+      RUST_LOG: info
+    depends_on: [device-sim, server_1, server_2]
+
+  device-sim:
+    build: ./tools
+    command: python ws_simulator.py --port 9001
+    stdin_open: true
+    tty: true
+
+  server_1:
+    build: ./tools
+    command: python tcp_server_sim.py --port 7001 --name server_1
+
+  server_2:
+    build: ./tools
+    command: python tcp_server_sim.py --port 7002 --name server_2 --ack

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://saisonnier.local/schemas/response.schema.json",
+  "title": "Réponse sortante (application -> client / serveurs TCP)",
+  "type": "object",
+  "required": ["response", "id", "status", "timestamp"],
+  "additionalProperties": false,
+  "properties": {
+    "response": { "type": "string", "minLength": 1 },
+    "id": { "$ref": "common.schema.json#/$defs/requestId" },
+    "status": { "$ref": "common.schema.json#/$defs/status" },
+    "data": { "type": "object" },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "code": { "$ref": "common.schema.json#/$defs/errorCode" },
+        "message": { "type": "string" },
+        "step": { "type": "string" }
+      }
+    },
+    "timestamp": { "$ref": "common.schema.json#/$defs/timestamp" }
+  },
+  "if": { "properties": { "status": { "const": "FAILED" } } },
+  "then": { "required": ["error"] }
+}

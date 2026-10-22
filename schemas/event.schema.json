@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://saisonnier.local/schemas/event.schema.json",
+  "title": "Évènement sortant (application -> client / serveurs TCP)",
+  "type": "object",
+  "required": ["event", "data", "timestamp"],
+  "additionalProperties": false,
+  "properties": {
+    "event": { "$ref": "common.schema.json#/$defs/eventName" },
+    "source": { "type": "string" },
+    "data": { "type": "object" },
+    "timestamp": { "$ref": "common.schema.json#/$defs/timestamp" }
+  }
+}

@@ -1,0 +1,5 @@
+target
+.git
+tools
+tests
+*.md
